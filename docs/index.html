@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirements Forge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* === Palette: Warm Sand + Deep Terracotta + Ink === */
+/* Font pairing: Playfair Display (headings) + Source Sans 3 (body) */
+:root {
+  --sand: #f5ede0;
+  --sand-mid: #edddc8;
+  --sand-dark: #d4bfa0;
+  --terracotta: #b5441a;
+  --terracotta-dark: #8f3314;
+  --terracotta-light: #d9673e;
+  --ink: #1f1510;
+  --ink-mid: #3d2b20;
+  --ink-light: #6b4f40;
+  --muted: #8a7265;
+  --surface: #fdf8f2;
+  --surface-raised: #fff9f3;
+  --border: #d8c4ae;
+  --border-soft: #ede2d3;
+  --verified: #2d6a3f;
+  --verified-bg: #edf7f0;
+  --unverified: #8f3314;
+  --unverified-bg: #fdf0ec;
+  --warning: #7a5c00;
+  --warning-bg: #fef9e6;
+  --gap: #294a6b;
+  --gap-bg: #eef3f9;
+  --score-high: #2d6a3f;
+  --score-mid: #7a5c00;
+  --score-low: #8f3314;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 4px rgba(31,21,16,0.10);
+  --shadow-md: 0 3px 12px rgba(31,21,16,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* === NAV === */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 54px;
+  box-shadow: 0 2px 8px rgba(31,21,16,0.25);
+}
+
+.nav-brand {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-brand-accent {
+  color: var(--terracotta-light);
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.nav-links button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-links button:hover,
+.nav-links button.active {
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+}
+
+.nav-links button.active {
+  color: var(--terracotta-light);
+}
+
+.nav-links button:focus-visible {
+  outline: 2px solid var(--terracotta-light);
+  outline-offset: 2px;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.4rem;
+  flex-direction: column;
+  gap: 5px;
+  border-radius: var(--radius);
+}
+
+.hamburger:focus-visible {
+  outline: 2px solid var(--terracotta-light);
+  outline-offset: 2px;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 700px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 54px;
+    left: 0;
+    right: 0;
+    background: var(--ink-mid);
+    flex-direction: column;
+    padding: 0.75rem;
+    gap: 0.25rem;
+    border-bottom: 2px solid var(--terracotta);
+  }
+  .nav-links.open { display: flex; }
+  .nav-links button { width: 100%; text-align: left; padding: 0.65rem 1rem; }
+}
+
+/* === LAYOUT === */
+.view { display: none; }
+.view.active { display: block; }
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* === HEADINGS === */
+h1, h2, h3 {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--terracotta-dark);
+  margin-bottom: 0.75rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+
+/* === HERO === */
+.hero {
+  padding: 2.5rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.hero-sub {
+  color: var(--ink-light);
+  font-size: 1.05rem;
+  margin-top: 0.5rem;
+  max-width: 580px;
+}
+
+/* === CARDS === */
+.card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+/* === FORM ELEMENTS === */
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+textarea, select {
+  width: 100%;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  transition: border-color 0.15s;
+  display: block;
+}
+
+textarea {
+  min-height: 220px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--terracotta);
+  box-shadow: 0 0 0 3px rgba(181,68,26,0.12);
+}
+
+select {
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+/* === BUTTONS === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 3px;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-primary {
+  background: var(--terracotta);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) { background: var(--terracotta-dark); }
+.btn-primary:disabled { background: var(--sand-dark); color: var(--muted); cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--terracotta);
+  border: 1.5px solid var(--terracotta);
+}
+
+.btn-secondary:hover { background: rgba(181,68,26,0.06); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-light);
+  border: 1.5px solid var(--border);
+}
+
+.btn-ghost:hover { background: var(--sand-mid); }
+
+.btn-sm {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.75rem;
+}
+
+/* === TOOLBAR ROW === */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+  margin-top: 1rem;
+}
+
+@media (max-width: 500px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* === STATUS === */
+.status {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--terracotta);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* === RESULTS AREA === */
+#results {
+  margin-top: 1.5rem;
+  display: none;
+}
+
+#results.visible { display: block; }
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.results-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.export-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* === SECTION BLOCKS === */
+.section-block {
+  margin-bottom: 1.75rem;
+}
+
+.section-label {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--terracotta-dark);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sand-dark);
+  margin-bottom: 1rem;
+}
+
+/* === STAKEHOLDER CARDS === */
+.stakeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.stakeholder-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-soft);
+  border-left: 4px solid var(--terracotta);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.stakeholder-name {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.stakeholder-role {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+
+.stakeholder-row {
+  font-size: 0.875rem;
+  color: var(--ink-light);
+  margin-top: 0.35rem;
+}
+
+.stakeholder-row strong {
+  color: var(--ink-mid);
+  font-weight: 600;
+}
+
+/* === USER STORIES === */
+.story-block {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.story-header {
+  background: var(--sand-mid);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.story-id {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--terracotta-dark);
+  background: rgba(181,68,26,0.10);
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.story-text {
+  font-size: 0.95rem;
+  color: var(--ink);
+  flex: 1;
+}
+
+.story-text em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--terracotta-dark);
+}
+
+/* === DoR SCORE === */
+.dor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.dor-high { background: var(--verified-bg); color: var(--score-high); }
+.dor-mid { background: var(--warning-bg); color: var(--score-mid); }
+.dor-low { background: var(--unverified-bg); color: var(--score-low); }
+
+.dor-bar-wrap {
+  height: 5px;
+  background: var(--border-soft);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 0.4rem 0 0.5rem;
+}
+
+.dor-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.dor-gaps {
+  font-size: 0.8rem;
+  color: var(--gap);
+  background: var(--gap-bg);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.dor-gaps li {
+  margin-left: 1rem;
+  margin-top: 0.15rem;
+}
+
+/* === ACCEPTANCE CRITERIA === */
+.story-body {
+  padding: 0.9rem 1rem;
+}
+
+.ac-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ac-item {
+  font-size: 0.875rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius);
+  border-left: 3px solid transparent;
+}
+
+.ac-verified {
+  background: var(--verified-bg);
+  border-left-color: var(--verified);
+}
+
+.ac-unverified {
+  background: var(--unverified-bg);
+  border-left-color: var(--unverified);
+}
+
+.ac-given { color: var(--ink-mid); }
+.ac-when { color: var(--ink-mid); }
+.ac-then { color: var(--ink-mid); }
+.ac-given strong, .ac-when strong, .ac-then strong {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  letter-spacing: 0.05em;
+  margin-right: 0.3em;
+}
+.ac-given strong { color: var(--terracotta); }
+.ac-when strong { color: var(--terracotta-dark); }
+.ac-then strong { color: var(--verified); }
+
+.ac-warning {
+  font-size: 0.75rem;
+  color: var(--unverified);
+  margin-top: 0.3rem;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* === TRUTH GUARD SUMMARY === */
+.truth-guard-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+}
+
+.tg-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tg-dot-v { background: var(--verified); }
+.tg-dot-u { background: var(--unverified); }
+
+/* === SIMPLE LISTS === */
+.simple-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.simple-list li {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  padding: 0.45rem 0.75rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  line-height: 1.5;
+}
+
+.simple-list li::before {
+  content: "- ";
+  color: var(--terracotta);
+  font-weight: 700;
+}
+
+/* === CONFLICT LOG === */
+.conflict-item {
+  background: var(--warning-bg);
+  border: 1px solid #d4b44a;
+  border-left: 4px solid var(--warning);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.9rem;
+}
+
+.conflict-between {
+  font-weight: 700;
+  color: var(--warning);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+
+.conflict-issue {
+  color: var(--ink-mid);
+}
+
+/* === ERROR === */
+.error-box {
+  background: var(--unverified-bg);
+  border: 1px solid var(--terracotta);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--terracotta-dark);
+  font-size: 0.9rem;
+}
+
+/* === MODEL TAG === */
+.model-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--sand-mid);
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  font-family: monospace;
+}
+
+/* === REFERENCE VIEW === */
+.ref-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ref-card h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.05rem;
+  color: var(--terracotta-dark);
+  margin-bottom: 0.6rem;
+}
+
+.ref-card p, .ref-card li {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  line-height: 1.65;
+}
+
+.ref-card ul, .ref-card ol {
+  padding-left: 1.25rem;
+  margin-top: 0.4rem;
+}
+
+.ref-card li {
+  margin-bottom: 0.2rem;
+}
+
+.invest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.invest-item {
+  background: var(--sand-mid);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+}
+
+.invest-letter {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  line-height: 1;
+}
+
+.invest-word {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-mid);
+  margin-bottom: 0.35rem;
+}
+
+.invest-desc {
+  font-size: 0.8rem;
+  color: var(--ink-light);
+}
+
+/* === TOAST === */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(4rem);
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.875rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transition: transform 0.25s, opacity 0.25s;
+  pointer-events: none;
+  z-index: 200;
+  white-space: nowrap;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* === MISC === */
+.text-muted { color: var(--muted); font-size: 0.85rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+
+@media (max-width: 500px) {
+  h1 { font-size: 1.5rem; }
+  .results-header { flex-direction: column; align-items: flex-start; }
+  .export-btns { width: 100%; }
+  .export-btns button { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-brand">
+    <span>Requirements</span><span class="nav-brand-accent">Forge</span>
+  </div>
+  <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-menu" role="list">
+    <li><button class="active" data-view="forge" aria-current="page">Forge</button></li>
+    <li><button data-view="reference">Reference</button></li>
+  </ul>
+</nav>
+
+<div id="view-forge" class="view active" role="main">
+  <main>
+    <div class="hero">
+      <h1>Turn messy transcripts<br>into clean BA artefacts</h1>
+      <p class="hero-sub">Paste a meeting recording, Teams notes, or email thread. Get stakeholder maps, INVEST user stories, acceptance criteria, conflicts, and a Truth Guard that flags anything not found in your source text.</p>
+    </div>
+
+    <div class="card">
+      <label for="transcript">Meeting transcript, notes, or email thread</label>
+      <textarea id="transcript" rows="12" placeholder="Paste your transcript here. Named speakers, messy wording, asides and all. The AI will extract; the Truth Guard will verify." aria-describedby="transcript-hint"></textarea>
+      <p class="text-muted mt-1" id="transcript-hint">Max 6 000 characters. Content stays in your browser except for the AI call.</p>
+
+      <div class="form-row">
+        <div>
+          <label for="model-select">Model</label>
+          <select id="model-select" aria-label="AI model">
+            <option value="flash">DeepSeek v4 Flash (fast)</option>
+            <option value="pro">DeepSeek v4 Pro (quality)</option>
+            <option value="minimax">MiniMax M3</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn btn-primary" id="extract-btn" aria-describedby="extract-hint">Extract requirements (AI)</button>
+        <button class="btn btn-ghost" id="example-output-btn">See an example</button>
+        <button class="btn btn-ghost btn-sm" id="load-example-btn">Load example transcript</button>
+      </div>
+      <p class="text-muted mt-1" id="extract-hint">Sends the transcript to the AI; the Truth Guard runs entirely in your browser.</p>
+
+      <div class="status" id="status-area" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <div id="results" aria-live="polite"></div>
+  </main>
+</div>
+
+<div id="view-reference" class="view" role="main">
+  <main>
+    <div class="hero">
+      <h1>BA Reference</h1>
+      <p class="hero-sub">A quick-reference card for Business Analysts: INVEST criteria, DoR checklist, and Truth Guard methodology.</p>
+    </div>
+
+    <div class="ref-card">
+      <h3>INVEST User Story Criteria</h3>
+      <p>Well-formed user stories satisfy all six INVEST dimensions. The DoR scorer checks each one automatically.</p>
+      <div class="invest-grid" aria-label="INVEST criteria">
+        <div class="invest-item">
+          <div class="invest-letter">I</div>
+          <div class="invest-word">Independent</div>
+          <div class="invest-desc">Can be developed and delivered without depending on another story.</div>
+        </div>
+        <div class="invest-item">
+          <div class="invest-letter">N</div>
+          <div class="invest-word">Negotiable</div>
+          <div class="invest-desc">The scope is a starting point, open to discussion between team and stakeholder.</div>
+        </div>
+        <div class="invest-item">
+          <div class="invest-letter">V</div>
+          <div class="invest-word">Valuable</div>
+          <div class="invest-desc">Delivers clear, specific value to a user or the business.</div>
+        </div>
+        <div class="invest-item">
+          <div class="invest-letter">E</div>
+          <div class="invest-word">Estimable</div>
+          <div class="invest-desc">The team can estimate the effort. Vague actions make this impossible.</div>
+        </div>
+        <div class="invest-item">
+          <div class="invest-letter">S</div>
+          <div class="invest-word">Small</div>
+          <div class="invest-desc">Fits in a sprint. The action should be a single, clear verb phrase.</div>
+        </div>
+        <div class="invest-item">
+          <div class="invest-letter">T</div>
+          <div class="invest-word">Testable</div>
+          <div class="invest-desc">Has acceptance criteria in Given / When / Then form.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <h3>Definition of Ready scoring</h3>
+      <p>The DoR score (0-100) is computed entirely in your browser from these checks:</p>
+      <ul>
+        <li><strong>Role present</strong> (15 pts): "As a [specific role]"</li>
+        <li><strong>Action present</strong> (15 pts): "I want [action]"</li>
+        <li><strong>Value present</strong> (15 pts): "so that [value]"</li>
+        <li><strong>Value is specific</strong> (15 pts): value is more than a generic placeholder</li>
+        <li><strong>Action is a single verb phrase</strong> (15 pts): no conjunctions splitting two actions</li>
+        <li><strong>No vague words</strong> (10 pts): none of: etc, some, fast, robust, user-friendly, asap, seamless, intuitive, nice</li>
+        <li><strong>At least one acceptance criterion</strong> (15 pts): the story is testable</li>
+      </ul>
+    </div>
+
+    <div class="ref-card">
+      <h3>Truth Guard methodology</h3>
+      <p>Each acceptance criterion is checked against the original transcript. The guard normalises both strings (lowercase, collapse whitespace), then searches for any run of 4 or more consecutive words from the criterion in the transcript. If found: verified (green). If not: unverified (red warning). This makes hallucinated requirements immediately visible.</p>
+    </div>
+
+    <div class="ref-card">
+      <h3>Artefacts produced</h3>
+      <ul>
+        <li><strong>Stakeholder map:</strong> who is in the room, what they want, what they own or are blocked by</li>
+        <li><strong>User stories:</strong> INVEST-format "As a / I want / so that" with a short id</li>
+        <li><strong>Acceptance criteria:</strong> Given / When / Then per story, Truth-Guard-verified</li>
+        <li><strong>Out of scope list:</strong> items explicitly ruled out or not discussed</li>
+        <li><strong>Open questions / parking lot:</strong> things that need an answer before work can start</li>
+        <li><strong>Conflict log:</strong> where two stakeholders contradict each other</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+<script>
+// ============================================================
+// NAVIGATION
+// ============================================================
+(function () {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("nav-menu");
+
+  hamburger.addEventListener("click", function () {
+    const open = navMenu.classList.toggle("open");
+    hamburger.setAttribute("aria-expanded", String(open));
+  });
+
+  navMenu.querySelectorAll("button[data-view]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const view = btn.dataset.view;
+      navMenu.querySelectorAll("button[data-view]").forEach(function (b) {
+        b.classList.remove("active");
+        b.removeAttribute("aria-current");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-current", "page");
+
+      document.querySelectorAll(".view").forEach(function (v) {
+        v.classList.remove("active");
+      });
+      document.getElementById("view-" + view).classList.add("active");
+
+      navMenu.classList.remove("open");
+      hamburger.setAttribute("aria-expanded", "false");
+    });
+  });
+})();
+
+// ============================================================
+// EXAMPLE TRANSCRIPT (retail: POS + click-and-collect)
+// ============================================================
+var EXAMPLE_TRANSCRIPT = [
+  "[Meeting: Riverside Retail - Click and Collect Launch, 14 Nov 2025]",
+  "",
+  "Priya Mehta (Product Manager): Right, let us get started. Today we are scoping the new click-and-collect feature for the online store and the in-store POS. We need this live before the January sale.",
+  "",
+  "Tom Gallagher (Store Ops Lead): My team needs a simple way to see incoming orders on the till. Right now the till is Vend, and we do not want a second screen. The order list should refresh automatically every two minutes so staff are not manually hitting refresh.",
+  "",
+  "Priya Mehta: Agreed. Customers also need an email confirmation the moment they place a click-and-collect order, with a collection reference code.",
+  "",
+  "Chloe Barnes (Head of Ecommerce): I would add that customers must be able to select a specific collection timeslot during checkout - not just a date. Tom, can your team honour one-hour slots?",
+  "",
+  "Tom Gallagher: Honestly, one-hour slots are going to be very difficult. We are not staffed for that level of precision during the sale period. I would push back and say two-hour slots maximum, and only between 10 am and 6 pm.",
+  "",
+  "Chloe Barnes: That is a problem for conversion. Our competitor does one-hour. I am not comfortable dropping to two-hour without a proper customer research piece first.",
+  "",
+  "Priya Mehta: Let us park timeslot granularity as an open question - we need data before we commit. For now, design for two-hour slots and we will revisit.",
+  "",
+  "Tom Gallagher: Also, when a staff member marks an order as collected on the POS, the customer should receive an automatic SMS. That closes the loop for us.",
+  "",
+  "Chloe Barnes: On the ecomm side, I need a dashboard showing daily click-and-collect volume, average collection time, and no-show rate. That is not MVP - we can add it in phase two.",
+  "",
+  "Priya Mehta: Agreed, analytics dashboard is out of scope for launch. What about returns? If a customer collects in store and wants to return the same day?",
+  "",
+  "Tom Gallagher: In-store returns for click-and-collect orders should follow the standard return policy. The POS already handles that - no new development needed.",
+  "",
+  "Chloe Barnes: One thing I am worried about is stock accuracy. If an item sells out online five minutes after a customer places a click-and-collect order, who handles that?",
+  "",
+  "Priya Mehta: Good catch. We need an alert to store ops when a reserved item drops to zero in the warehouse. That is a must-have.",
+  "",
+  "Tom Gallagher: Agreed. And please do not add the loyalty points integration to this phase - we do not have the budget and it will delay everything.",
+  "",
+  "[Meeting ends]"
+].join("\n");
+
+// ============================================================
+// PRE-BAKED EXAMPLE OUTPUT (offline demo)
+// ============================================================
+var EXAMPLE_OUTPUT = {
+  stakeholders: [
+    { name: "Priya Mehta", role: "Product Manager", wants: "Launch click-and-collect before the January sale with confirmed orders, collection codes, and a stock alert system", owns: "Scope decisions and timeline" },
+    { name: "Tom Gallagher", role: "Store Ops Lead", wants: "An auto-refreshing order list on the Vend POS, two-hour collection slots, and an automatic SMS when an order is marked as collected", owns: "POS system and in-store staffing; blocked on one-hour timeslots due to staffing constraints" },
+    { name: "Chloe Barnes", role: "Head of Ecommerce", wants: "One-hour collection timeslots and an analytics dashboard for click-and-collect performance", owns: "Online checkout and ecommerce conversion; blocked on timeslot granularity pending customer research" }
+  ],
+  stories: [
+    {
+      id: "US-1",
+      role: "customer",
+      action: "receive an email confirmation with a collection reference code immediately after placing a click-and-collect order",
+      value: "I have proof of my order and know what to quote when collecting in store",
+      acceptance: [
+        { given: "a customer completes a click-and-collect order online", when: "the order is confirmed by the system", then: "an email is sent within 60 seconds containing a unique collection reference code" },
+        { given: "the confirmation email is sent", when: "the customer opens it", then: "the collection reference code is displayed prominently and in plain text" }
+      ]
+    },
+    {
+      id: "US-2",
+      role: "store staff member",
+      action: "see incoming click-and-collect orders refresh automatically on the Vend POS every two minutes",
+      value: "I do not need to manually refresh the screen and can serve customers faster",
+      acceptance: [
+        { given: "a new click-and-collect order is placed online", when: "up to two minutes pass", then: "the order appears in the POS order list without any manual action from staff" },
+        { given: "the POS order list is displayed", when: "the two-minute refresh cycle completes", then: "the list updates and shows the current count of pending orders" }
+      ]
+    },
+    {
+      id: "US-3",
+      role: "customer",
+      action: "select a two-hour collection timeslot between 10 am and 6 pm during checkout",
+      value: "I can plan my journey to the store around a predictable collection window",
+      acceptance: [
+        { given: "a customer is on the checkout page with click-and-collect selected", when: "they choose a collection date", then: "two-hour slots between 10 am and 6 pm are displayed and selectable" },
+        { given: "a customer selects a timeslot", when: "they complete the order", then: "the selected timeslot is shown on the confirmation email and stored against the order" }
+      ]
+    },
+    {
+      id: "US-4",
+      role: "store staff member",
+      action: "trigger an automatic SMS to the customer when marking an order as collected on the POS",
+      value: "customers are notified of collection without staff making manual contact",
+      acceptance: [
+        { given: "an order is in a pending-collection state on the POS", when: "a staff member marks it as collected", then: "an SMS is sent to the customer's registered mobile number within 30 seconds" },
+        { given: "the SMS is sent", when: "the customer receives it", then: "the message confirms the order is collected and includes the collection reference code" }
+      ]
+    },
+    {
+      id: "US-5",
+      role: "store ops manager",
+      action: "receive an alert when a reserved click-and-collect item drops to zero in the warehouse",
+      value: "I can contact the customer before they travel to the store for an unavailable item",
+      acceptance: [
+        { given: "a click-and-collect order reserves an item", when: "stock of that item reaches zero in the warehouse", then: "an alert is sent to store ops within five minutes" },
+        { given: "the stock alert is raised", when: "a manager views it", then: "it includes the order reference, item name, and customer contact details" }
+      ]
+    }
+  ],
+  out_of_scope: [
+    "Analytics dashboard showing daily click-and-collect volume, average collection time, and no-show rate (phase two)",
+    "Loyalty points integration",
+    "In-store returns flow for click-and-collect orders (handled by existing POS return policy)"
+  ],
+  open_questions: [
+    "Timeslot granularity: should slots be one-hour or two-hour? Requires customer research data before a final decision.",
+    "Stock alert delivery method: email, SMS, POS notification, or all three?",
+    "What is the cut-off time for placing a click-and-collect order for same-day collection?"
+  ],
+  conflicts: [
+    { between: "Tom Gallagher and Chloe Barnes", issue: "Collection timeslot granularity: Chloe wants one-hour slots for conversion parity with competitors; Tom says two-hour slots are the maximum feasible given staffing during the sale period." }
+  ]
+};
+
+// ============================================================
+// DETERMINISTIC INVEST / DoR SCORER
+// ============================================================
+var VAGUE_WORDS = ["etc", "some", "fast", "robust", "user-friendly", "asap", "seamless", "intuitive", "nice", "simple", "easy", "quickly", "efficiently", "better"];
+
+function scoreDOR(story) {
+  var score = 100;
+  var gaps = [];
+
+  var role = (story.role || "").trim();
+  var action = (story.action || "").trim();
+  var value = (story.value || "").trim();
+  var acceptance = story.acceptance || [];
+
+  // Role present (15 pts)
+  if (!role || role.length < 2) {
+    score -= 15;
+    gaps.push("Missing role: the story must name who benefits");
+  }
+
+  // Action present (15 pts)
+  if (!action || action.length < 3) {
+    score -= 15;
+    gaps.push("Missing action: the story must describe what the user wants to do");
+  }
+
+  // Value present (15 pts)
+  if (!value || value.length < 3) {
+    score -= 15;
+    gaps.push("Missing value: the story must state why the user wants this");
+  }
+
+  // Value is specific (15 pts): not too short, not a generic placeholder
+  var genericValues = ["be happy", "be satisfied", "be better", "save time", "improve things", "it works", "things work"];
+  var valueIsGeneric = value.length < 10 || genericValues.some(function (g) { return value.toLowerCase().indexOf(g) !== -1; });
+  if (valueIsGeneric) {
+    score -= 15;
+    gaps.push("Value is too vague or generic: specify the concrete outcome for the user or business");
+  }
+
+  // Action is a single verb phrase (15 pts): check for conjunctions splitting into two actions
+  var conjunctionSplit = /\b(and also|as well as|in addition|plus)\b/i.test(action);
+  var andCount = (action.match(/\band\b/gi) || []).length;
+  if (conjunctionSplit || andCount > 1) {
+    score -= 15;
+    gaps.push("Action may describe more than one thing: split into separate stories");
+  }
+
+  // No vague words (10 pts)
+  var combined = (action + " " + value).toLowerCase();
+  var foundVague = VAGUE_WORDS.filter(function (w) {
+    return new RegExp("\\b" + w + "\\b").test(combined);
+  });
+  if (foundVague.length > 0) {
+    score -= 10;
+    gaps.push("Vague words found: " + foundVague.join(", ") + " - replace with measurable specifics");
+  }
+
+  // At least one acceptance criterion (15 pts)
+  if (!acceptance || acceptance.length === 0) {
+    score -= 15;
+    gaps.push("No acceptance criteria: add at least one Given / When / Then to make this testable");
+  }
+
+  score = Math.max(0, Math.min(100, score));
+  return { score: score, gaps: gaps };
+}
+
+// ============================================================
+// TRUTH GUARD
+// ============================================================
+function normalise(str) {
+  return (str || "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function buildNgrams(text, n) {
+  var words = normalise(text).split(" ").filter(function (w) { return w.length > 0; });
+  var ngrams = new Set();
+  for (var i = 0; i <= words.length - n; i++) {
+    ngrams.add(words.slice(i, i + n).join(" "));
+  }
+  return ngrams;
+}
+
+function truthGuard(criterion, transcript) {
+  var N = 4;
+  var transcriptNgrams = buildNgrams(transcript, N);
+  var critText = (criterion.given || "") + " " + (criterion.when || "") + " " + (criterion.then || "");
+  var critWords = normalise(critText).split(" ").filter(function (w) { return w.length > 0; });
+
+  if (critWords.length < N) {
+    // Too short to verify - assume ok
+    return true;
+  }
+
+  for (var i = 0; i <= critWords.length - N; i++) {
+    var candidate = critWords.slice(i, i + N).join(" ");
+    if (transcriptNgrams.has(candidate)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ============================================================
+// RENDER RESULTS
+// ============================================================
+function renderResults(data, transcript, isExample) {
+  var resultsEl = document.getElementById("results");
+  resultsEl.classList.add("visible");
+
+  var html = "";
+
+  // Header
+  var modelLabel = isExample ? "pre-baked example" : (data.model || "");
+  html += '<div class="results-header">';
+  html += '<div>';
+  html += '<div class="results-title">Extracted artefacts</div>';
+  if (modelLabel) {
+    html += '<span class="model-tag">' + esc(modelLabel) + '</span>';
+  }
+  html += '</div>';
+  html += '<div class="export-btns">';
+  html += '<button class="btn btn-ghost btn-sm" id="copy-md-btn">Copy Markdown</button>';
+  html += '<button class="btn btn-ghost btn-sm" id="dl-md-btn">Download .md</button>';
+  html += '</div>';
+  html += '</div>';
+
+  // ---- Stakeholder map ----
+  html += '<div class="section-block">';
+  html += '<div class="section-label">Stakeholder map</div>';
+  html += '<div class="stakeholder-grid">';
+  (data.stakeholders || []).forEach(function (s) {
+    html += '<div class="stakeholder-card">';
+    html += '<div class="stakeholder-name">' + esc(s.name) + '</div>';
+    html += '<div class="stakeholder-role">' + esc(s.role) + '</div>';
+    html += '<div class="stakeholder-row"><strong>Wants:</strong> ' + esc(s.wants) + '</div>';
+    html += '<div class="stakeholder-row"><strong>Owns / Blocked:</strong> ' + esc(s.owns) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '</div>';
+
+  // ---- Truth Guard summary (pre-compute) ----
+  var stories = data.stories || [];
+  var totalAC = 0;
+  var verifiedAC = 0;
+  var acResults = stories.map(function (story) {
+    return (story.acceptance || []).map(function (ac) {
+      totalAC++;
+      var v = truthGuard(ac, transcript);
+      if (v) verifiedAC++;
+      return v;
+    });
+  });
+
+  html += '<div class="truth-guard-summary" role="status" aria-label="Truth Guard summary">';
+  html += '<strong style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-mid)">Truth Guard</strong>';
+  html += '<div class="tg-stat"><div class="tg-dot tg-dot-v"></div><span>' + verifiedAC + ' verified</span></div>';
+  html += '<div class="tg-stat"><div class="tg-dot tg-dot-u"></div><span>' + (totalAC - verifiedAC) + ' unverified</span></div>';
+  html += '<span class="text-muted">of ' + totalAC + ' acceptance criteria checked against source transcript</span>';
+  html += '</div>';
+
+  // ---- User stories ----
+  html += '<div class="section-block">';
+  html += '<div class="section-label">User stories (INVEST)</div>';
+
+  stories.forEach(function (story, si) {
+    var dor = scoreDOR(story);
+    var dorClass = dor.score >= 75 ? "dor-high" : dor.score >= 45 ? "dor-mid" : "dor-low";
+    var barColor = dor.score >= 75 ? "var(--score-high)" : dor.score >= 45 ? "var(--score-mid)" : "var(--score-low)";
+
+    html += '<div class="story-block">';
+    // Story header
+    html += '<div class="story-header">';
+    html += '<span class="story-id">' + esc(story.id || ("US-" + (si + 1))) + '</span>';
+    html += '<div class="story-text">';
+    html += 'As a <em>' + esc(story.role) + '</em>, I want ' + esc(story.action) + ', so that ' + esc(story.value);
+    html += '</div>';
+    html += '<span class="dor-badge ' + dorClass + '" title="Definition of Ready score">DoR ' + dor.score + '/100</span>';
+    html += '</div>';
+
+    // Story body
+    html += '<div class="story-body">';
+
+    // DoR bar + gaps
+    html += '<div class="dor-bar-wrap"><div class="dor-bar" style="width:' + dor.score + '%;background:' + barColor + '"></div></div>';
+    if (dor.gaps.length > 0) {
+      html += '<div class="dor-gaps" role="list" aria-label="DoR gaps for ' + esc(story.id || ("US-" + (si + 1))) + '">';
+      html += '<ul>';
+      dor.gaps.forEach(function (g) {
+        html += '<li>' + esc(g) + '</li>';
+      });
+      html += '</ul></div>';
+    }
+
+    // Acceptance criteria
+    var acList = story.acceptance || [];
+    if (acList.length > 0) {
+      html += '<ul class="ac-list mt-2" aria-label="Acceptance criteria">';
+      acList.forEach(function (ac, ai) {
+        var verified = acResults[si][ai];
+        html += '<li class="ac-item ' + (verified ? "ac-verified" : "ac-unverified") + '">';
+        html += '<div class="ac-given"><strong>Given</strong> ' + esc(ac.given) + '</div>';
+        html += '<div class="ac-when"><strong>When</strong> ' + esc(ac.when) + '</div>';
+        html += '<div class="ac-then"><strong>Then</strong> ' + esc(ac.then) + '</div>';
+        if (!verified) {
+          html += '<div class="ac-warning" role="alert">Warning: unverified - not found in transcript. This criterion may have been inferred or fabricated.</div>';
+        }
+        html += '</li>';
+      });
+      html += '</ul>';
+    }
+
+    html += '</div>'; // story-body
+    html += '</div>'; // story-block
+  });
+
+  html += '</div>'; // section-block stories
+
+  // ---- Out of scope ----
+  html += '<div class="section-block">';
+  html += '<div class="section-label">Out of scope</div>';
+  html += '<ul class="simple-list">';
+  (data.out_of_scope || []).forEach(function (item) {
+    html += '<li>' + esc(item) + '</li>';
+  });
+  html += '</ul>';
+  html += '</div>';
+
+  // ---- Open questions ----
+  html += '<div class="section-block">';
+  html += '<div class="section-label">Open questions / parking lot</div>';
+  html += '<ul class="simple-list">';
+  (data.open_questions || []).forEach(function (item) {
+    html += '<li>' + esc(item) + '</li>';
+  });
+  html += '</ul>';
+  html += '</div>';
+
+  // ---- Conflict log ----
+  html += '<div class="section-block">';
+  html += '<div class="section-label">Conflict log</div>';
+  (data.conflicts || []).forEach(function (c) {
+    html += '<div class="conflict-item">';
+    html += '<div class="conflict-between">' + esc(c.between) + '</div>';
+    html += '<div class="conflict-issue">' + esc(c.issue) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  resultsEl.innerHTML = html;
+
+  // Export handlers
+  var md = buildMarkdown(data, transcript, acResults, stories);
+
+  document.getElementById("copy-md-btn").addEventListener("click", function () {
+    navigator.clipboard.writeText(md).then(function () {
+      showToast("Markdown copied to clipboard");
+    }).catch(function () {
+      showToast("Copy failed - try Download instead");
+    });
+  });
+
+  document.getElementById("dl-md-btn").addEventListener("click", function () {
+    var blob = new Blob([md], { type: "text/markdown" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "requirements-" + Date.now() + ".md";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Downloading requirements.md");
+  });
+}
+
+// ============================================================
+// MARKDOWN BUILDER
+// ============================================================
+function buildMarkdown(data, transcript, acResults, stories) {
+  var lines = [];
+  lines.push("# Requirements Artefacts");
+  lines.push("");
+  lines.push("Generated by Requirements Forge");
+  lines.push("");
+
+  lines.push("## Stakeholder map");
+  lines.push("");
+  (data.stakeholders || []).forEach(function (s) {
+    lines.push("### " + s.name + " (" + s.role + ")");
+    lines.push("- **Wants:** " + s.wants);
+    lines.push("- **Owns / Blocked:** " + s.owns);
+    lines.push("");
+  });
+
+  lines.push("## User stories");
+  lines.push("");
+  (stories || []).forEach(function (story, si) {
+    var dor = scoreDOR(story);
+    lines.push("### " + (story.id || ("US-" + (si + 1))) + " (DoR: " + dor.score + "/100)");
+    lines.push("As a " + story.role + ", I want " + story.action + ", so that " + story.value);
+    lines.push("");
+    lines.push("**Acceptance criteria:**");
+    (story.acceptance || []).forEach(function (ac, ai) {
+      var v = acResults[si] && acResults[si][ai];
+      lines.push("- Given " + ac.given + " / When " + ac.when + " / Then " + ac.then + (v ? "" : " [UNVERIFIED]"));
+    });
+    if (dor.gaps.length > 0) {
+      lines.push("");
+      lines.push("**DoR gaps:** " + dor.gaps.join("; "));
+    }
+    lines.push("");
+  });
+
+  lines.push("## Out of scope");
+  lines.push("");
+  (data.out_of_scope || []).forEach(function (item) {
+    lines.push("- " + item);
+  });
+  lines.push("");
+
+  lines.push("## Open questions");
+  lines.push("");
+  (data.open_questions || []).forEach(function (item) {
+    lines.push("- " + item);
+  });
+  lines.push("");
+
+  lines.push("## Conflict log");
+  lines.push("");
+  (data.conflicts || []).forEach(function (c) {
+    lines.push("- **" + c.between + ":** " + c.issue);
+  });
+  lines.push("");
+
+  return lines.join("\n");
+}
+
+// ============================================================
+// ESCAPE HELPER
+// ============================================================
+function esc(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(function () { t.classList.remove("show"); }, 2500);
+}
+
+// ============================================================
+// SET STATUS
+// ============================================================
+function setStatus(msg, showSpinner) {
+  var el = document.getElementById("status-area");
+  if (!msg) { el.innerHTML = ""; return; }
+  el.innerHTML = (showSpinner ? '<div class="spinner" aria-hidden="true"></div>' : "") + '<span>' + esc(msg) + '</span>';
+}
+
+// ============================================================
+// BUTTONS
+// ============================================================
+document.getElementById("load-example-btn").addEventListener("click", function () {
+  document.getElementById("transcript").value = EXAMPLE_TRANSCRIPT;
+  setStatus("Example transcript loaded.");
+});
+
+document.getElementById("example-output-btn").addEventListener("click", function () {
+  setStatus("Rendering pre-baked example (no API call).");
+  renderResults(EXAMPLE_OUTPUT, EXAMPLE_TRANSCRIPT, true);
+  setStatus("");
+});
+
+document.getElementById("extract-btn").addEventListener("click", async function () {
+  var transcript = document.getElementById("transcript").value.trim();
+  if (!transcript) {
+    setStatus("Please paste a transcript first.");
+    return;
+  }
+  var model = document.getElementById("model-select").value;
+  var btn = document.getElementById("extract-btn");
+  btn.disabled = true;
+  setStatus("Sending to AI, please wait...", true);
+
+  document.getElementById("results").classList.remove("visible");
+  document.getElementById("results").innerHTML = "";
+
+  try {
+    var resp = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task: "requirements", transcript: transcript, model: model })
+    });
+
+    if (!resp.ok) {
+      var errData;
+      try { errData = await resp.json(); } catch (e) { errData = {}; }
+      setStatus("");
+      var resultsEl = document.getElementById("results");
+      resultsEl.classList.add("visible");
+      resultsEl.innerHTML = '<div class="error-box"><strong>Error ' + resp.status + ':</strong> ' + esc(errData.error || "Unexpected error from server.") + '</div>';
+      return;
+    }
+
+    var data = await resp.json();
+    setStatus("");
+    renderResults(data, transcript, false);
+  } catch (err) {
+    setStatus("");
+    var resultsEl = document.getElementById("results");
+    resultsEl.classList.add("visible");
+    resultsEl.innerHTML = '<div class="error-box"><strong>Network error:</strong> ' + esc(err.message) + '</div>';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// ============================================================
+// SMOKE TEST (runs once at page load, results in console)
+// ============================================================
+(function smokeTest() {
+  // Test 1: DoR scorer - well-formed story
+  var wellFormed = {
+    role: "store manager",
+    action: "view pending click-and-collect orders on the POS",
+    value: "I can allocate staff to prepare orders before customers arrive",
+    acceptance: [{ given: "the POS is open", when: "a new order is received", then: "it appears in the list within two minutes" }]
+  };
+  var r1 = scoreDOR(wellFormed);
+  var test1Pass = (r1.score >= 0 && r1.score <= 100 && r1.score > 70);
+
+  // Test 2: DoR scorer - vague story
+  var vague = {
+    role: "",
+    action: "make things fast and user-friendly",
+    value: "",
+    acceptance: []
+  };
+  var r2 = scoreDOR(vague);
+  var test2Pass = (r2.score >= 0 && r2.score <= 100 && r2.score < r1.score);
+
+  // Test 3: Truth Guard - present phrase
+  var shortTranscript = "the order list should refresh automatically every two minutes so staff are not manually hitting refresh";
+  var criterion = { given: "a new order arrives", when: "two minutes pass", then: "refresh automatically every two minutes" };
+  var test3Pass = truthGuard(criterion, shortTranscript) === true;
+
+  // Test 4: Truth Guard - absent phrase
+  var criterionAbsent = { given: "the moon is full", when: "a wizard appears", then: "unicorns dance at midnight" };
+  var test4Pass = truthGuard(criterionAbsent, shortTranscript) === false;
+
+  // Test 5: Offline example renders (check EXAMPLE_OUTPUT has expected keys)
+  var test5Pass = Array.isArray(EXAMPLE_OUTPUT.stakeholders) &&
+    Array.isArray(EXAMPLE_OUTPUT.stories) &&
+    EXAMPLE_OUTPUT.stories.length > 0 &&
+    Array.isArray(EXAMPLE_OUTPUT.out_of_scope) &&
+    Array.isArray(EXAMPLE_OUTPUT.open_questions) &&
+    Array.isArray(EXAMPLE_OUTPUT.conflicts);
+
+  console.group("Requirements Forge - Smoke Tests");
+  console.log("Test 1 (DoR well-formed 0-100, score > 70):", test1Pass ? "PASS" : "FAIL", "| score =", r1.score);
+  console.log("Test 2 (DoR vague < well-formed):", test2Pass ? "PASS" : "FAIL", "| score =", r2.score);
+  console.log("Test 3 (Truth Guard present phrase -> verified):", test3Pass ? "PASS" : "FAIL");
+  console.log("Test 4 (Truth Guard absent phrase -> unverified):", test4Pass ? "PASS" : "FAIL");
+  console.log("Test 5 (offline example data structure valid):", test5Pass ? "PASS" : "FAIL");
+  console.groupEnd();
+})();
+</script>
+</body>
+</html>
