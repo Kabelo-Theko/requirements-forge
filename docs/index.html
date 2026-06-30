@@ -177,7 +177,7 @@ nav {
 main {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 1rem 1.25rem 4rem;
 }
 
 /* === HEADINGS === */
@@ -207,9 +207,9 @@ h3 {
 
 /* === HERO === */
 .hero {
-  padding: 2.5rem 0 2rem;
+  padding: 1.25rem 0 1.75rem;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .hero-sub {
@@ -794,7 +794,12 @@ select {
   .export-btns { width: 100%; }
   .export-btns button { flex: 1; }
 }
+  .js .hero, .js .card, .js .ref-card{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);will-change:opacity,transform}
+  .js .hero.in, .js .card.in, .js .ref-card.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.js .hero,.js .card,.js .ref-card{opacity:1;transform:none;transition:none}}
+  @media print{.hero,.card,.ref-card{opacity:1 !important;transform:none !important}}
 </style>
+<script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
 
@@ -1549,6 +1554,20 @@ document.getElementById("extract-btn").addEventListener("click", async function 
   console.log("Test 4 (Truth Guard absent phrase -> unverified):", test4Pass ? "PASS" : "FAIL");
   console.log("Test 5 (offline example data structure valid):", test5Pass ? "PASS" : "FAIL");
   console.groupEnd();
+})();
+</script>
+<script>
+(function(){
+  try{
+    function revealVisible(){ var els=document.querySelectorAll(".hero,.card,.ref-card"); for(var i=0;i<els.length;i++){ if(els[i].offsetParent!==null) els[i].classList.add("in"); } }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var targets = Array.prototype.slice.call(document.querySelectorAll(".hero,.card,.ref-card"));
+    if(reduce || !("IntersectionObserver" in window)){ targets.forEach(function(el){ el.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin:"0px 0px -6% 0px", threshold:0.06 });
+    targets.forEach(function(el){ io.observe(el); });
+    var nav = document.querySelector(".nav-links"); if(nav){ nav.addEventListener("click", function(){ setTimeout(revealVisible, 60); }); }
+    setTimeout(revealVisible, 1200);
+  }catch(err){ Array.prototype.slice.call(document.querySelectorAll(".hero,.card,.ref-card")).forEach(function(el){ el.classList.add("in"); }); }
 })();
 </script>
 </body>
