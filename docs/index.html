@@ -88,13 +88,14 @@ html[data-theme="night-studio"]{
   --sand-dark:#3A3449;
 }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;min-width:0}
 html{font-size:16px;scroll-behavior:smooth}
+@media (max-width:560px){input,select,textarea{font-size:16px}}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
-body{font-family:var(--font-text);background:var(--canvas);color:var(--ink);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background var(--m-large) var(--ease)}
+body{font-family:var(--font-text);background:var(--canvas);color:var(--ink);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background var(--m-large) var(--ease);overflow-x:clip}
 
 /* ── nav: quiet studio header on canvas ── */
 nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--canvas) 90%,transparent);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,36px);border-bottom:1px solid var(--border-soft)}
@@ -189,7 +190,7 @@ select{height:2.75rem;cursor:pointer;appearance:none;background-image:linear-gra
 .story-block{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius-lg);margin-bottom:var(--sp-5);overflow:hidden;box-shadow:var(--shadow)}
 .story-header{background:var(--sand-mid);padding:var(--sp-4) var(--sp-5);display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-3);flex-wrap:wrap}
 .story-id{font-family:var(--font-mono);font-size:.72rem;font-weight:400;letter-spacing:.06em;color:var(--accent-deep);background:var(--accent-subtle);padding:4px 12px;border-radius:var(--radius-pill);flex-shrink:0}
-.story-text{font-size:1rem;color:var(--ink);flex:1;min-width:220px;line-height:1.55}
+.story-text{font-size:1rem;color:var(--ink);flex:1;min-width:min(220px,100%);line-height:1.55;overflow-wrap:anywhere}
 .story-text em{font-style:normal;font-weight:600;color:var(--accent-deep)}
 .dor-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.75rem;padding:4px 12px;border-radius:var(--radius-pill);flex-shrink:0}
 .dor-high{background:var(--verified-bg);color:var(--score-high)}
