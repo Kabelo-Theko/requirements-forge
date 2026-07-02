@@ -99,9 +99,10 @@ body{font-family:var(--font-text);background:var(--canvas);color:var(--ink);min-
 
 /* ── nav: quiet studio header on canvas ── */
 nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--canvas) 90%,transparent);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,36px);border-bottom:1px solid var(--border-soft)}
-.nav-brand{font-family:var(--font-display);font-size:1.25rem;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:2px}
+.nav-brand{flex:none;font-family:var(--font-display);font-size:1.25rem;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:2px}
+@media (max-width:480px){.nav-brand>span:first-child{display:none}.nav-brand .nav-brand-accent{margin-left:0}}
 .nav-brand-accent{color:var(--accent-deep)}
-.nav-right{display:flex;align-items:center;gap:6px}
+.nav-right{display:flex;align-items:center;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none}
 .nav-links{display:flex;gap:4px;list-style:none}
 .nav-links button{background:none;border:none;color:var(--ink-light);font-family:var(--font-text);font-size:.9rem;font-weight:500;padding:8px 16px;border-radius:var(--radius-pill);cursor:pointer;transition:color var(--m-micro) var(--ease),background var(--m-micro)}
 .nav-links button:hover{color:var(--ink);background:var(--accent-subtle)}
