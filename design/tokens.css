@@ -1,0 +1,91 @@
+/* ════════════════════════════════════════════════════════════════════
+   REQUIREMENTS FORGE v2 · "THE STORY STUDIO" DESIGN SYSTEM — TOKENS
+   Project: requirements-forge · github.com/Kabelo-Theko/requirements-forge
+   Persona: the studio where messy talk is shaped into stories. Porcelain
+   greige, one bold violet, chunky Young Serif. Truth Guard keeps it honest.
+   Themes on html[data-theme]: porcelain (default) · night-studio.
+   Type: Young Serif (display) · Onest (text) · Fragment Mono (G/W/T, ids,
+   scores). Measured pairs: accessibility.md.
+   Legacy aliases (--terracotta*, --sand-*) kept so the engine script's
+   emitted markup keeps working — they now point at studio tokens.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════
+   REQUIREMENTS FORGE v2 · "THE STORY STUDIO" — where messy talk is
+   shaped into stories. Porcelain greige, one bold violet, chunky
+   Young Serif. Truth Guard keeps everyone honest.
+   Themes: porcelain (default) · night-studio
+   ════════════════════════════════════════════════════════════════ */
+:root{
+  --font-display:"Young Serif",Georgia,serif;
+  --font-text:"Onest",system-ui,sans-serif;
+  --font-mono:"Fragment Mono",ui-monospace,monospace;
+  --radius:12px;--radius-lg:20px;--radius-xl:26px;--radius-pill:999px;
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;
+  --sp-8:32px;--sp-10:40px;--sp-12:48px;--sp-16:64px;
+  --m-micro:130ms;--m-small:220ms;--m-large:320ms;--m-page:420ms;
+  --ease:cubic-bezier(.2,0,0,1);
+  --spring:cubic-bezier(.34,1.26,.5,1);
+  --emph:cubic-bezier(.05,.7,.1,1);
+  --page-max:920px;
+}
+:root,html[data-theme="porcelain"]{
+  color-scheme:light;
+  --canvas:#F2F0EB;          /* porcelain greige           */
+  --canvas-sunken:#E8E5DE;
+  --surface:#FCFBF8;
+  --surface-raised:#FFFFFF;
+  --ink:#211E28;             /* violet-black · 14.4:1      */
+  --ink-mid:#3A3542;
+  --ink-light:#555062;       /* 7.5:1 on card              */
+  --muted:#6A6577;
+  --accent:#5F2EE0;          /* studio violet              */
+  --accent-deep:#4F26C4;     /* as text · 7.7:1            */
+  --accent-hover:#5228CC;
+  --on-accent:#F5F1FF;       /* 6.4:1                      */
+  --accent-subtle:rgba(95,46,224,.08);
+  --accent-border:rgba(95,46,224,.35);
+  --verified:#2A7048;        --verified-bg:rgba(42,112,72,.10);
+  --unverified:#B0342A;      --unverified-bg:rgba(176,52,42,.09);
+  --warning:#7A5600;         --warning-bg:rgba(150,106,0,.12);
+  --gap:#3F3A8C;             --gap-bg:#ECEAF8;
+  --score-high:#2A7048;--score-mid:#7A5600;--score-low:#B0342A;
+  --border:rgba(33,30,40,.14);
+  --border-soft:rgba(33,30,40,.09);
+  --shadow:0 1px 2px rgba(33,30,40,.05),0 3px 10px rgba(33,30,40,.06);
+  --shadow-md:0 12px 30px -10px rgba(33,30,40,.16);
+  --focus:0 0 0 2px var(--canvas),0 0 0 4px var(--accent);
+  --sand-mid:#EDEAE2;        /* legacy alias: story header band */
+  --sand-dark:#D6D2C6;
+  --terracotta:var(--accent);--terracotta-dark:var(--accent-deep);--terracotta-light:#8A66F0;
+}
+html[data-theme="night-studio"]{
+  color-scheme:dark;
+  --canvas:#17141F;
+  --canvas-sunken:#110F18;
+  --surface:#211D2C;
+  --surface-raised:#282334;
+  --ink:#EEEAF4;             /* 15.3:1                     */
+  --ink-mid:#D5CFE2;
+  --ink-light:#B3ABC6;       /* 7.5:1 on card              */
+  --muted:#8F87A3;
+  --accent:#A78BFF;
+  --accent-deep:#A78BFF;     /* 6.7:1 as text              */
+  --accent-hover:#BCA6FF;
+  --on-accent:#1D1136;       /* 6.6:1                      */
+  --accent-subtle:rgba(167,139,255,.10);
+  --accent-border:rgba(167,139,255,.36);
+  --verified:#7CCB96;        --verified-bg:rgba(124,203,150,.10);
+  --unverified:#F08A7B;      --unverified-bg:rgba(240,138,123,.10);
+  --warning:#E0B45C;         --warning-bg:rgba(224,180,92,.10);
+  --gap:#C6BEF2;             --gap-bg:rgba(167,139,255,.10);
+  --score-high:#7CCB96;--score-mid:#E0B45C;--score-low:#F08A7B;
+  --border:rgba(238,234,244,.13);
+  --border-soft:rgba(238,234,244,.08);
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+  --shadow-md:0 12px 30px rgba(0,0,0,.5);
+  --focus:0 0 0 2px var(--canvas),0 0 0 4px var(--accent);
+  --sand-mid:#2A2537;
+  --sand-dark:#3A3449;
+}
+
